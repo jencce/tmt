@@ -803,7 +803,7 @@ class Guest(tmt.utils.Common):
         self.debug("Ensure that rsync is installed on the guest.")
         try:
             self.execute(Command('rsync', '--version'))
-            return CheckRsyncOutcome.ALREADY_INSTALLED
+            ret = CheckRsyncOutcome.ALREADY_INSTALLED
         except tmt.utils.RunError:
             pass
 
@@ -829,8 +829,9 @@ class Guest(tmt.utils.Common):
 
         # Install the rsync
         self.execute(ShellScript(f"{package_manager} install -y rsync" + readonly))
+        ret = CheckRsyncOutcome.INSTALLED
 
-        return CheckRsyncOutcome.INSTALLED
+        return ret
 
     @classmethod
     def requires(cls) -> List['tmt.base.Dependency']:
@@ -1141,6 +1142,7 @@ class GuestSsh(Guest):
         try:
             rsync()
         except tmt.utils.RunError:
+            time.sleep(5)
             try:
                 if self._check_rsync() == CheckRsyncOutcome.ALREADY_INSTALLED:
                     raise
@@ -1206,6 +1208,7 @@ class GuestSsh(Guest):
         try:
             rsync()
         except tmt.utils.RunError:
+            time.sleep(5)
             try:
                 if self._check_rsync() == CheckRsyncOutcome.ALREADY_INSTALLED:
                     raise
@@ -1352,7 +1355,7 @@ class GuestSsh(Guest):
         self.debug("Ensure that rsync is installed on the guest.")
         try:
             self.execute(Command('rsync', '--version'))
-            return CheckRsyncOutcome.ALREADY_INSTALLED
+            ret = CheckRsyncOutcome.ALREADY_INSTALLED
         except tmt.utils.RunError:
             pass
 
@@ -1378,8 +1381,9 @@ class GuestSsh(Guest):
 
         # Install the rsync
         self.execute(ShellScript(f"{package_manager} install -y rsync" + readonly))
+        ret = CheckRsyncOutcome.INSTALLED
 
-        return CheckRsyncOutcome.INSTALLED
+        return ret
 
 
 @dataclasses.dataclass
